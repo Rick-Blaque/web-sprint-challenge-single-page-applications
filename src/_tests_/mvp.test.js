@@ -22,7 +22,7 @@ describe("Pizza test, sprint 3 challenge", () => {
     const orderPizza = document.querySelector('#order-pizza')
     expect(orderPizza).toBeInTheDocument();
   })
-
+  
   it('From homepage "/" route, click #order-pizza, navigate to "/pizza" route', () => {
     const history = createMemoryHistory()
     render(
@@ -155,7 +155,8 @@ describe("Pizza test, sprint 3 challenge", () => {
     );
     expect(testLocation.pathname).toBe('/pizza')
     const specialInstructions = document.querySelector('#special-text')
-    expect(specialInstructions).toBeInTheDocument()
+    expect(specialInstructions).toBeInTheDocument();
+    userEvent.type(specialInstructions, 'Tony Stark')
   });
 
   it("Fill out #pizza-form, submit #pizza-form with data to https://reqres.in/api/orders", async () => {

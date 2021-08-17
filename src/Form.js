@@ -2,30 +2,41 @@ import React, { Component, useState } from 'react'
 import { Route, Link, Switch } from 'react-router-dom'
 import './Form.css'
 import Order from './Order'
+import schema from './Validation/formSchema'
+import * as yup from 'yup'
 
-// const defaultFormValues = {name: '', size:'', extraCheese: false, pepperoni:false, mushroom:false, ham:false, special:'' }
+const initialFormErrors = {
+    name: '' 
+  }
 
 export default function Form(props) {
-    // const [pizza, setPizza] = useState(defaultFormValues)
+    const [formErrors, setFormErrors] = useState(initialFormErrors)
+    const {addOrder, pizzaOrder, pizza, errors} = props;
     
-   function onSubmit (event) {
-       event.preventDefault();
-    //    const newPizza = {
-    //        name: pizza.name,
-    //        size: pizza.size,
-    //        extraCheese: pizza.extraCheese === false ? false : true,
-    //        pepperoni: pizza.pepperoni === false ? false : true,
-    //        mushroom: pizza.mushroom === false ? false : true,
-    //        ham: pizza.ham === false ? false : true,
-    //        special: pizza.special
-    //    }
-       
-       props.addPizza()
-
-   }
+        function onSubmit (event) {
+        event.preventDefault();
+        
+        addOrder()
+    }
    function onChange(evt) {
-       props.orderPizza( evt.target.name,evt.target.value)
+       const { checked, name, value, type} = evt.target
+       
+    if (type === 'checkbox') {
+        pizzaOrder( name,checked)
+        yup.reach(schema, name).validate(checked)
+        } else {
+        // otherwise, call change() with name and value
+        pizzaOrder( name, value)
+        yup.reach(schema, name).validate(value)
+        .catch((err) => {
+            setFormErrors({...formErrors, [name]: err.message})
+        })
+        }
+       
+       
    }
+ 
+   
     
         return (
             <div>
@@ -36,14 +47,16 @@ export default function Form(props) {
                      //value={pizza.name}
                      id='name-input' 
                      minLength='2'
+                     
                      onChange={onChange}/>
                      </label>
+                    <div>{formErrors.name}</div>
                      <br/>
                    <label htmlFor='extraCheese'>
                        Extra Cheese: 
                        <input type='checkbox'
                        name='extraCheese'
-                       //value={pizza.extraCheese}
+                       checked={pizza.extraCheese}
                        onChange={onChange}
                        />
                    </label>
@@ -52,7 +65,7 @@ export default function Form(props) {
                        Pepperoni: 
                        <input type='checkbox'
                        name='pepperoni'
-                      // value={pizza.pepperoni}
+                       checked={pizza.pepperoni}
                        onChange={onChange}
                        />
                    </label>
@@ -61,7 +74,7 @@ export default function Form(props) {
                        Mushroom: 
                        <input type='checkbox'
                        name='mushroom'
-                       //value={pizza.mushroom}
+                       checked={pizza.mushroom}
                        onChange={onChange}
                        />
                    </label>
@@ -70,7 +83,7 @@ export default function Form(props) {
                        Ham: 
                        <input type='checkbox'
                        name='ham'
-                       //value={pizza.ham}
+                       checked={pizza.ham}
                        onChange={onChange}
                        />
                    </label>
